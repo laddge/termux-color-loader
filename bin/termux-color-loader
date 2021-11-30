@@ -1,0 +1,22 @@
+#!/bin/bash
+if [[ -e ~/.termux/colors/$1.properties ]]; then
+    if [[ -e ~/.termux/colors.properties ]]; then
+        exist=false
+        find ~/.termux/colors -type f | while read line
+        do
+            diff -s ~/.termux/colors.properties $line > /dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                exist=true
+            fi
+        done
+        if [[ $exist == false ]]; then
+            cp ~/.termux/colors.properties ~/.termux/colors/$(date +%y%m%d%H%M%S).properties
+        fi
+    fi
+    cp -f ~/.termux/colors/$1.properties ~/.termux/colors.properties
+    $PREFIX/bin/termux-reload-settings
+    echo "Loaded $1."
+else
+    echo 'Scheme not found!'
+    exit 1
+fi
